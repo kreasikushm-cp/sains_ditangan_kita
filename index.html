@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LABORATORIUM DIGITAL — Sains Di Tangan Kita</title>
+  <style>
+    :root {
+      --primary-blue: #0288d1;
+      --dark-blue: #01579b;
+      --accent-green: #2e7d32;
+      --light-green: #e8f5e9;
+      --accent-yellow: #fbc02d;
+      --bg-light: #f4f7f6;
+      --card-bg: #ffffff;
+      --text-dark: #212121;
+      --text-muted: #616161;
+      --border-color: #e0e0e0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--bg-light); color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; }
+
+    header { background: linear-gradient(135deg, var(--dark-blue), var(--primary-blue)); color: white; padding: 15px 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
+    header h1 { font-size: 1.8rem; text-transform: uppercase; letter-spacing: 1px; color: #fff; }
+    header p { font-size: 0.95rem; font-style: italic; margin-top: 4px; color: #e0f7fa; }
+    .school-tag { position: absolute; left: 20px; top: 15px; font-weight: bold; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; }
+
+    .container { max-width: 1050px; width: 100%; margin: 20px auto; padding: 20px; flex: 1; }
+    .card { background: var(--card-bg); border-radius: 12px; padding: 25px; box-shadow: 0 8px 16px rgba(0,0,0,0.08); margin-bottom: 20px; }
+    .hidden { display: none !important; }
+
+    .btn { display: inline-block; background-color: var(--primary-blue); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 0.95rem; font-weight: bold; cursor: pointer; transition: all 0.2s; text-align: center; text-decoration: none; margin: 4px; }
+    .btn:hover { background-color: var(--dark-blue); transform: translateY(-1px); }
+    .btn-green { background-color: var(--accent-green); }
+    .btn-green:hover { background-color: #1b5e20; }
+    .btn-yellow { background-color: var(--accent-yellow); color: #333; }
+    .btn-yellow:hover { background-color: #f57f17; color: #fff; }
+    .btn-red { background-color: #c62828; }
+    .btn-red:hover { background-color: #8e0000; }
+    .btn-large { font-size: 1.1rem; padding: 14px 28px; width: 100%; max-width: 320px; }
+
+    .level-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; justify-content: center; background: #e1f5fe; padding: 10px; border-radius: 8px; }
+    .level-btn { padding: 8px 14px; background: #fff; border: 1px solid var(--primary-blue); border-radius: 20px; font-size: 0.85rem; font-weight: bold; color: var(--primary-blue); cursor: pointer; }
+    .level-btn.active { background: var(--primary-blue); color: #fff; }
+
+    .form-group { margin-bottom: 15px; text-align: left; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
+    .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95rem; }
+
+    table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9rem; }
+    th, td { border: 1px solid var(--border-color); padding: 8px 12px; text-align: center; }
+    th { background-color: #f0f4f8; font-weight: bold; color: var(--dark-blue); }
+
+    .chart-container { position: relative; width: 100%; height: 320px; margin: 20px 0; background: #fafafa; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; }
+
+    .photo-preview { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid #ccc; }
+
+    @media print {
+      header, .level-nav, .no-print { display: none !important; }
+      .container { max-width: 100%; margin: 0; padding: 0; }
+      .card { box-shadow: none; border: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="school-tag" id="school-tag">SMP NEGERI SAINS DIGITAL</div>
+    <h1>LABORATORIUM DIGITAL</h1>
+    <p>“Amati, Ukur, Catat, Grafikkan, dan Buktikan!”</p>
+  </header>
+
+  <div class="container">
+
+    <!-- HALAMAN BERANDA -->
+    <div id="page-landing" class="card text-center">
+      <h2>Sains Di Tangan Kita</h2>
+      <p style="color: var(--text-muted); margin: 10px 0 20px;">Lakukan praktikum nyata, catat data ilmiahmu, dan buat laporan berbasis bukti!</p>
+
+      <div style="max-width: 450px; margin: 0 auto; text-align: left;">
+        <div class="form-group">
+          <label>Nama Siswa / Kelompok:</label>
+          <input type="text" id="player-name" class="form-control" value="Peneliti Muda IPA">
+        </div>
+        <div class="form-group">
+          <label>Kelas:</label>
+          <select id="player-class" class="form-control">
+            <option>Kelas VII</option>
+            <option>Kelas VIII</option>
+            <option>Kelas IX</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Pilihan Misi Praktikum:</label>
+          <select id="player-mission" class="form-control" onchange="switchMissionData(this.value)">
+            <option value="tanaman">Misi 1: Pertumbuhan Tanaman (Tinggi vs Hari)</option>
+            <option value="suhu">Misi 2: Perubahan Suhu Air (Suhu vs Waktu)</option>
+          </select>
+        </div>
+        <button class="btn btn-green btn-large" style="margin-top: 10px;" onclick="startLab()">MULAI PRAKTIKUM</button>
+      </div>
+
+      <div style="margin-top: 25px;" class="no-print">
+        <button class="btn btn-yellow" onclick="showPage('page-teacher')">Panel Guru & Evaluasi</button>
+      </div>
+    </div>
+
+    <!-- UTAMA PERMAINAN / PRAKTIKUM (7 LEVEL) -->
+    <div id="page-lab" class="card hidden">
+      <div class="level-nav no-print">
+        <button class="level-btn active" id="lbtn-1" onclick="goToLevel(1)">L1: Misi Ilmuwan</button>
+        <button class="level-btn" id="lbtn-2" onclick="goToLevel(2)">L2: Pengamatan Nyata</button>
+        <button class="level-btn" id="lbtn-3" onclick="goToLevel(3)">L3: Tabel Data</button>
+        <button class="level-btn" id="lbtn-4" onclick="goToLevel(4)">L4: Grafik Digital</button>
+        <button class="level-btn" id="lbtn-5" onclick="goToLevel(5)">L5: Detektif Data</button>
+        <button class="level-btn" id="lbtn-6" onclick="goToLevel(6)">L6: Laporan Ilmiah</button>
+        <button class="level-btn" id="lbtn-7" onclick="goToLevel(7)">L7: Presentasi</button>
+      </div>
+
+      <!-- LEVEL 1: MISI ILMUWAN MUDA -->
+      <div id="level-1">
+        <h3>Level 1: Misi Ilmuwan Muda</h3>
+        <p style="color: var(--text-muted); margin-bottom: 15px;">Pahami tujuan, prosedur, dan K3 praktikum sebelum memulai pengamatan nyata.</p>
+        
+        <div style="background: #e1f5fe; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 15px;">
+          <h4 id="lab-title-display">Misi Pertumbuhan Tanaman</h4>
+          <p><strong>Pertanyaan Penelitian:</strong> <span id="lab-question-display">-</span></p>
+          <p style="margin-top: 8px;"><strong>Alat & Bahan:</strong> <span id="lab-tools-display">-</span></p>
+        </div>
+
+        <div style="background: #fff3e0; padding: 15px; border-radius: 8px; text-align: left; border-left: 4px solid var(--accent-yellow);">
+          <h4>⚠️ Prosedur Keselamatan Kerja (K3):</h4>
+          <ul style="margin-left: 20px; font-size: 0.9rem; line-height: 1.6;">
+            <li>Gunakan alat ukur (penggaris/termometer) secara konsisten dan hati-hati.</li>
+            <li>Jaga kebersihan area pengamatan praktikum.</li>
+            <li>Gunakan air bersuhu aman dan lakukan pengawasan saat menggunakan wadah keping/kaca.</li>
+          </ul>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+          <button class="btn btn-green" onclick="goToLevel(2)">Lanjut ke Pengamatan Nyata &raquo;</button>
+        </div>
+      </div>
+
+      <!-- LEVEL 2: PENGAMATAN NYATA & FOTO -->
+      <div id="level-2" class="hidden">
+        <h3>Level 2: Pengamatan Nyata & Kamera</h3>
+        <p style="color: var(--text-muted); margin-bottom: 15px;">Lakukan pengukuran langsung pada objekmu dan dokumentasikan bukti fotonya!</p>
+        
+        <div style="border: 2px dashed var(--primary-blue); padding: 20px; border-radius: 8px; text-align: center;">
+          <p>Ambil atau Unggah Foto Bukti Pengamatan:</p>
+          <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;" onchange="handlePhotoUpload(event)">
+          <button class="btn" onclick="document.getElementById('camera-input').click()">📸 AMBIL / UNGGAH FOTO</button>
+          <div id="photo-preview-container" style="margin-top: 15px;">
+            <!-- Uploaded photos render here -->
+          </div>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+          <button class="btn btn-green" onclick="goToLevel(3)">Input Data ke Tabel &raquo;</button>
+        </div>
+      </div>
+
+      <!-- LEVEL 3: PENCATATAN TABEL DATA -->
+      <div id="level-3" class="hidden">
+        <h3>Level 3: Tabel Data Digital</h3>
+        <p style="color: var(--text-muted); margin-bottom: 10px;">Catat hasil pengukuranmu. Jangan mengisi angka fiktif tanpa pengamatan!</p>
+        
+        <div style="text-align: left; margin-bottom: 10px;">
+          <button class="btn btn-green" onclick="addTableRow()">+ Tambah Baris Pengamatan</button>
+          <button class="btn btn-yellow" onclick="loadSampleData()">Muat Data Contoh (Latihan)</button>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table id="data-table">
+            <thead>
+              <tr id="table-header-row">
+                <!-- Dynamic Header -->
+              </tr>
+            </thead>
+            <tbody id="table-body">
+              <!-- Dynamic Rows -->
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+          <button class="btn btn-green" onclick="goToLevel(4)">Generate Grafik Digital &raquo;</button>
+        </div>
+      </div>
+
+      <!-- LEVEL 4: ANALISIS GRAFIK -->
+      <div id="level-4" class="hidden">
+        <h3>Level 4: Grafik Digital Otomatis</h3>
+        <p style="color: var(--text-muted);">Visualisasi data aktual yang dimasukkan pada Tabel Data.</p>
+
+        <div class="chart-container">
+          <svg id="svg-chart" width="100%" height="100%" viewBox="0 0 600 280">
+            <!-- Dynamic SVG Chart lines/dots -->
+          </svg>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+          <button class="btn btn-green" onclick="goToLevel(5)">Lanjut ke Detektif Data &raquo;</button>
+        </div>
+      </div>
+
+      <!-- LEVEL 5: DETEKTIF DATA -->
+      <div id="level-5" class="hidden">
+        <h3>Level 5: Detektif Data (Analisis Soal)</h3>
+        <p style="color: var(--text-muted); margin-bottom: 15px;">Jawab pertanyaan analisis berdasarkan tren grafik dan tabel datamu.</p>
+
+        <div id="analysis-questions-box" style="text-align: left;">
+          <!-- Dynamic Analysis Questions -->
+        </div>
+        <button class="btn btn-yellow" style="margin-top: 15px;" onclick="checkAnalysisAnswers()">Periksa Analisis</button>
+        <div id="analysis-feedback" style="margin-top: 10px; font-weight: bold;"></div>
+
+        <div style="margin-top: 20px; text-align: right;">
+          <button class="btn btn-green" onclick="goToLevel(6)">Susun Laporan Ilmiah &raquo;</button>
+        </div>
+      </div>
+
+      <!-- LEVEL 6: LAPORAN ILMIAH -->
+      <div id="level-6" class="hidden">
+        <h3>Level 6: Laporan Praktikum Digital</h3>
+        <p style="color: var(--text-muted); margin-bottom: 15px;">Lengkapi bagian pembahasan dan kesimpulan berdasarkan bukti nyata data yang kamu peroleh.</p>
+
+        <div style="text-align: left; max-width: 800px; margin: 0 auto;">
+          <div class="form-group">
+            <label>Pembahasan Hasil Pengamatan:</label>
+            <textarea id="rep-discussion" class="form-control" rows="4" placeholder="Jelaskan pola grafik, kecenderungan data, dan faktor penyebab perubahan..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Kesimpulan Berbasis Bukti:</label>
+            <textarea id="rep-conclusion" class="form-control" rows="3" placeholder="Berdasarkan data pengamatan, dapat disimpulkan bahwa..."></textarea>
+          </div>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+          <button class="btn btn-green" onclick="goToLevel(7)">Pratinjau Presentasi &raquo;</button>
+        </div>
+      </div>
+
+      <!-- LEVEL 7: PRESENTASI HASIL -->
+      <div id="level-7" class="hidden">
+        <h3>Level 7: Presentasi & Hasil Akhir</h3>
+        <p style="color: var(--text-muted);">Pratinjau Laporan Praktikum siap cetak atau dibagikan ke Guru.</p>
+
+        <div id="final-report-preview" style="border: 1px solid #ccc; padding: 20px; border-radius: 8px; text-align: left; background: #fff; margin: 15px 0;">
+          <!-- Final Compiled Report -->
+        </div>
+
+        <div class="no-print" style="margin-top: 20px;">
+          <button class="btn btn-green" onclick="window.print()">🖨️ CETAK / SIMPAN PDF LAPORAN</button>
+          <button class="btn btn-yellow" onclick="exportCSV()">📁 EKSPOR DATA CSV</button>
+          <button class="btn" onclick="showPage('page-landing')">Kembali ke Beranda</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HALAMAN GURU -->
+    <div id="page-teacher" class="card hidden">
+      <h3>Panel Guru & Rubrik Penilaian IPA</h3>
+      <p style="color: var(--text-muted); margin-bottom: 20px;">Atur nama sekolah dan pelajari rubrik asesmen berbasis proses sains.</p>
+
+      <div class="form-group" style="max-width: 400px; margin: 0 auto 20px;">
+        <label>Ubah Nama Sekolah:</label>
+        <input type="text" id="cfg-school" class="form-control" value="SMP NEGERI SAINS DIGITAL">
+        <button class="btn btn-green" style="margin-top: 10px;" onclick="saveSchoolName()">Simpan Nama Sekolah</button>
+      </div>
+
+      <h4 style="margin-top: 20px; text-align: left;">Rubrik Penilaian Kinerja Praktikum (Total 100 Poin)</h4>
+      <table style="text-align: left;">
+        <tr><th>Kriteria</th><th>Bobot</th><th>Deskripsi Indikator</th></tr>
+        <tr><td>Prosedur & K3</td><td>15 Poin</td><td>Mengikuti langkah kerja dan menjaga keselamatan praktikum.</td></tr>
+        <tr><td>Kelengkapan Data</td><td>20 Poin</td><td>Mencatat angka pengukuran aktual lengkap dengan satuan yang tepat.</td></tr>
+        <tr><td>Grafik Digital</td><td>20 Poin</td><td>Grafik terbentuk akurat sesuai titik sumbu data pengamatan.</td></tr>
+        <tr><td>Analisis & Pembahasan</td><td>25 Poin</td><td>Mampu mengidentifikasi pola tren data dan penyebabnya.</td></tr>
+        <tr><td>Kesimpulan Berbasis Bukti</td><td>20 Poin</td><td>Menarik kesimpulan runtut yang merujuk pada tabel dan grafik.</td></tr>
+      </table>
+
+      <div style="margin-top: 20px;" class="no-print">
+        <button class="btn" onclick="showPage('page-landing')">Kembali ke Beranda</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // --- DATA STATE ---
+    let appState = {
+      playerName: "Peneliti Muda IPA",
+      playerClass: "Kelas VII",
+      mission: "tanaman", // 'tanaman' or 'suhu'
+      photos: [],
+      rows: []
+    };
+
+    const missionConfigs = {
+      tanaman: {
+        title: "Misi 1: Pertumbuhan Tanaman",
+        question: "Bagaimana perubahan tinggi tanaman (cm) selama beberapa hari pengamatan?",
+        tools: "Biji kacang hijau/tanaman muda, penggaris (cm), wadah tanam, air, kamera.",
+        xLabel: "Hari ke-",
+        yLabel: "Tinggi (cm)",
+        defaultRows: [
+          { x: 1, y: 0.5, note: "Biji mulai berkecambah" },
+          { x: 2, y: 1.2, note: "Tunas muncul di permukaan" },
+          { x: 3, y: 2.8, note: "Batang bertambah tinggi" },
+          { x: 4, y: 4.5, note: "Daun pertama terbuka" }
+        ]
+      },
+      suhu: {
+        title: "Misi 2: Perubahan Suhu Air",
+        question: "Bagaimana penurunan suhu air (°C) selama proses pendinginan dalam interval waktu (menit)?",
+        tools: "Air hangat, termometer (°C), stopwatch/pengukur waktu, wadah aman, kamera.",
+        xLabel: "Waktu (Menit)",
+        yLabel: "Suhu (°C)",
+        defaultRows: [
+          { x: 0, y: 70, note: "Suhu awal air hangat" },
+          { x: 2, y: 62, note: "Proses pendinginan alami" },
+          { x: 4, y: 55, note: "Suhu terus turun" },
+          { x: 6, y: 50, note: "Laju penurunan melambat" }
+        ]
+      }
+    };
+
+    function showPage(pageId) {
+      document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
+      document.getElementById(pageId).classList.remove('hidden');
+    }
+
+    function switchMissionData(missionKey) {
+      appState.mission = missionKey;
+    }
+
+    function startLab() {
+      appState.playerName = document.getElementById('player-name').value || "Peneliti Muda";
+      appState.playerClass = document.getElementById('player-class').value;
+      appState.mission = document.getElementById('player-mission').value;
+
+      const cfg = missionConfigs[appState.mission];
+      document.getElementById('lab-title-display').innerText = cfg.title;
+      document.getElementById('lab-question-display').innerText = cfg.question;
+      document.getElementById('lab-tools-display').innerText = cfg.tools;
+
+      // Reset or init rows
+      if (appState.rows.length === 0) {
+        appState.rows = [{ x: 1, y: 0, note: "Pengamatan awal" }];
+      }
+
+      showPage('page-lab');
+      goToLevel(1);
+    }
+
+    function goToLevel(lvl) {
+      for(let i=1; i<=7; i++) {
+        document.getElementById(`level-${i}`).classList.add('hidden');
+        document.getElementById(`lbtn-${i}`).classList.remove('active');
+      }
+      document.getElementById(`level-${lvl}`).classList.remove('hidden');
+      document.getElementById(`lbtn-${lvl}`).classList.add('active');
+
+      if(lvl === 3) renderTable();
+      if(lvl === 4) renderChart();
+      if(lvl === 5) renderAnalysisQuestions();
+      if(lvl === 7) renderFinalReport();
+    }
+
+    // --- LEVEL 2: CAMERA FOTO ---
+    function handlePhotoUpload(evt) {
+      const files = evt.target.files;
+      if(files && files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          appState.photos.push(e.target.result);
+          renderPhotoPreviews();
+        }
+        reader.readAsDataURL(files[0]);
+      }
+    }
+
+    function renderPhotoPreviews() {
+      const box = document.getElementById('photo-preview-container');
+      box.innerHTML = "";
+      appState.photos.forEach(p => {
+        const img = document.createElement('img');
+        img.src = p;
+        img.className = 'photo-preview';
+        img.style.margin = "5px";
+        box.appendChild(img);
+      });
+    }
+
+    // --- LEVEL 3: TABEL DATA ---
+    function renderTable() {
+      const cfg = missionConfigs[appState.mission];
+      const headerRow = document.getElementById('table-header-row');
+      headerRow.innerHTML = `
+        <th>No.</th>
+        <th>${cfg.xLabel}</th>
+        <th>${cfg.yLabel}</th>
+        <th>Catatan Pengamatan</th>
+        <th>Aksi</th>
+      `;
+
+      const tbody = document.getElementById('table-body');
+      tbody.innerHTML = "";
+
+      appState.rows.forEach((row, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td><input type="number" class="form-control" value="${row.x}" onchange="updateRow(${idx}, 'x', this.value)"></td>
+          <td><input type="number" step="0.1" class="form-control" value="${row.y}" onchange="updateRow(${idx}, 'y', this.value)"></td>
+          <td><input type="text" class="form-control" value="${row.note}" onchange="updateRow(${idx}, 'note', this.value)"></td>
+          <td><button class="btn btn-red" style="padding: 4px 8px;" onclick="deleteRow(${idx})">Hapus</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateRow(idx, field, val) {
+      appState.rows[idx][field] = field === 'note' ? val : parseFloat(val) || 0;
+    }
+
+    function addTableRow() {
+      const lastX = appState.rows.length > 0 ? appState.rows[appState.rows.length - 1].x + 1 : 1;
+      appState.rows.push({ x: lastX, y: 0, note: "" });
+      renderTable();
+    }
+
+    function deleteRow(idx) {
+      if(confirm("Hapus baris data ini?")) {
+        appState.rows.splice(idx, 1);
+        renderTable();
+      }
+    }
+
+    function loadSampleData() {
+      const cfg = missionConfigs[appState.mission];
+      appState.rows = JSON.parse(JSON.stringify(cfg.defaultRows));
+      renderTable();
+    }
+
+    // --- LEVEL 4: GRAFIK SVG OTOMATIS ---
+    function renderChart() {
+      const cfg = missionConfigs[appState.mission];
+      const svg = document.getElementById('svg-chart');
+      svg.innerHTML = "";
+
+      if(appState.rows.length === 0) return;
+
+      const margin = 40;
+      const width = 600 - margin * 2;
+      const height = 280 - margin * 2;
+
+      const xVals = appState.rows.map(r => r.x);
+      const yVals = appState.rows.map(r => r.y);
+
+      const maxX = Math.max(...xVals, 5);
+      const maxY = Math.max(...yVals, 10);
+
+      // Axes
+      const axisPath = `M ${margin} ${margin} L ${margin} ${height + margin} L ${width + margin} ${height + margin}`;
+      const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      pathEl.setAttribute("d", axisPath);
+      pathEl.setAttribute("stroke", "#333");
+      pathEl.setAttribute("stroke-width", "2");
+      pathEl.setAttribute("fill", "none");
+      svg.appendChild(pathEl);
+
+      // Draw Points & Lines
+      let pointsStr = "";
+      appState.rows.forEach(r => {
+        const cx = margin + (r.x / maxX) * width;
+        const cy = (height + margin) - (r.y / maxY) * height;
+        pointsStr += `${cx},${cy} `;
+
+        // Circle dot
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", cx);
+        circle.setAttribute("cy", cy);
+        circle.setAttribute("r", "5");
+        circle.setAttribute("fill", "#0288d1");
+        svg.appendChild(circle);
+
+        // Value Label
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", cx);
+        text.setAttribute("y", cy - 10);
+        text.setAttribute("font-size", "10");
+        text.setAttribute("text-anchor", "middle");
+        text.textContent = `${r.y}`;
+        svg.appendChild(text);
+      });
+
+      // Line
+      const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+      polyline.setAttribute("points", pointsStr.trim());
+      polyline.setAttribute("fill", "none");
+      polyline.setAttribute("stroke", "#2e7d32");
+      polyline.setAttribute("stroke-width", "3");
+      svg.appendChild(polyline);
+    }
+
+    // --- LEVEL 5: DETEKTIF DATA ---
+    function renderAnalysisQuestions() {
+      const box = document.getElementById('analysis-questions-box');
+      const cfg = missionConfigs[appState.mission];
+      const yVals = appState.rows.map(r => r.y);
+      const minY = yVals.length ? Math.min(...yVals) : 0;
+      const maxY = yVals.length ? Math.max(...yVals) : 0;
+      const diff = (maxY - minY).toFixed(1);
+
+      box.innerHTML = `
+        <p><strong>1. Berapa nilai terkecil dan terbesar dari data hasil pengamatanmu?</strong></p>
+        <p style="color: var(--primary-blue); font-weight: bold; margin-bottom: 15px;">Akurat Terdeteksi Data: Min = ${minY}, Max = ${maxY} (Selisih Total = ${diff})</p>
+
+        <p><strong>2. Apakah kecenderungan/pola grafik menunjukkan peningkatan, penurunan, atau stabil?</strong></p>
+        <select id="ans-trend" class="form-control" style="margin-bottom: 15px;">
+          <option value="">-- Pilih Pola Grafik --</option>
+          <option value="naik">Meningkat (Tren Positif)</option>
+          <option value="turun">Menurun (Tren Negatif)</option>
+          <option value="konstan">Stabil / Tidak Berubah</option>
+        </select>
+
+        <p><strong>3. Sebutkan faktor lingkungan utama yang paling memengaruhi hasil pengukuran tersebut!</strong></p>
+        <input type="text" id="ans-factor" class="form-control" placeholder="Misal: Cahaya matahari, air, atau suhu ruangan...">
+      `;
+    }
+
+    function checkAnalysisAnswers() {
+      const trend = document.getElementById('ans-trend').value;
+      const factor = document.getElementById('ans-factor').value.trim();
+
+      if(trend && factor) {
+        document.getElementById('analysis-feedback').innerText = "✅ Analisis data berhasil disimpan dan valid!";
+        document.getElementById('analysis-feedback').style.color = "var(--accent-green)";
+      } else {
+        document.getElementById('analysis-feedback').innerText = "⚠️ Harap lengkapi semua jawaban analisis!";
+        document.getElementById('analysis-feedback').style.color = "red";
+      }
+    }
+
+    // --- LEVEL 7: FINAL REPORT PREVIEW ---
+    function renderFinalReport() {
+      const cfg = missionConfigs[appState.mission];
+      const disc = document.getElementById('rep-discussion').value || "Belum diisi.";
+      const conc = document.getElementById('rep-conclusion').value || "Belum diisi.";
+
+      let tableHTML = `<table><tr><th>${cfg.xLabel}</th><th>${cfg.yLabel}</th><th>Catatan</th></tr>`;
+      appState.rows.forEach(r => {
+        tableHTML += `<tr><td>${r.x}</td><td>${r.y}</td><td>${r.note}</td></tr>`;
+      });
+      tableHTML += `</table>`;
+
+      let photosHTML = "";
+      appState.photos.forEach(p => {
+        photosHTML += `<img src="${p}" class="photo-preview" style="margin: 5px;">`;
+      });
+
+      document.getElementById('final-report-preview').innerHTML = `
+        <h2 style="text-align: center; color: var(--dark-blue);">LAPORAN PRAKTIKUM IPA DIGITAL</h2>
+        <p style="text-align: center; font-style: italic;">${document.getElementById('school-tag').innerText}</p>
+        <hr style="margin: 15px 0;">
+
+        <p><strong>Nama / Kelompok:</strong> ${appState.playerName}</p>
+        <p><strong>Kelas:</strong> ${appState.playerClass}</p>
+        <p><strong>Misi Praktikum:</strong> ${cfg.title}</p>
+        <p><strong>Pertanyaan Penelitian:</strong> ${cfg.question}</p>
+
+        <h4 style="margin-top: 15px;">A. Data Pengamatan Aktual</h4>
+        ${tableHTML}
+
+        <h4 style="margin-top: 15px;">B. Dokumen Bukti Foto</h4>
+        <div>${photosHTML || "<em>Tidak ada foto diunggah.</em>"}</div>
+
+        <h4 style="margin-top: 15px;">C. Pembahasan Hasil</h4>
+        <p style="white-space: pre-line; background: #fafafa; padding: 10px; border-radius: 4px;">${disc}</p>
+
+        <h4 style="margin-top: 15px;">D. Kesimpulan Berbasis Bukti</h4>
+        <p style="white-space: pre-line; background: #e8f5e9; padding: 10px; border-radius: 4px; font-weight: bold;">${conc}</p>
+      `;
+    }
+
+    // --- EKSPOR CSV ---
+    function exportCSV() {
+      const cfg = missionConfigs[appState.mission];
+      let csv = `${cfg.xLabel},${cfg.yLabel},Catatan\n`;
+      appState.rows.forEach(r => {
+        csv += `${r.x},${r.y},"${r.note}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', `data_praktikum_${appState.mission}.csv`);
+      a.click();
+    }
+
+    function saveSchoolName() {
+      const name = document.getElementById('cfg-school').value;
+      document.getElementById('school-tag').innerText = name;
+      alert("Nama sekolah berhasil disimpan!");
+    }
+  </script>
+</body>
+</html>
